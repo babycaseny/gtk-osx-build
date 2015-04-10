@@ -85,15 +85,13 @@
   </autotools>
 
   <autotools id="python3" autogenargs="--enable-shared" autogen-sh="configure">
-    <branch repo="python" module="3.3.2/Python-3.3.2.tar.xz" version="3.3.2"/>
+    <branch repo="python" module="3.4.3/Python-3.4.3.tar.xz" version="3.4.3">
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/Python3.4-stack_size-flag.patch" strip="1"/>
+    </branch>
     <dependencies>
       <dep package="gettext-runtime"/>
       <dep package='readline'/>
     </dependencies>
-    <after>
-      <dep package="berkeleydb"/>
-      <dep package="berkeleydb-nonsrctree"/>
-    </after>
   </autotools>
 
   <distutils id="pybsddb">
@@ -102,8 +100,11 @@
 	    version="5.3.0"/>
     <dependencies>
       <dep package="python3"/>
-      <dep package="berkeleydb"/>
     </dependencies>
+    <after>
+      <dep package="berkeleydb"/>
+      <dep package="berkeleydb-nonsrctree"/>
+    </after>
   </distutils>
 
 <!-- Pycairo 1.8.4+ requires Python 2.6. Leopard comes only with 2.5,

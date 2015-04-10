@@ -44,6 +44,14 @@
     </dependencies>
   </metamodule>
 
+  <metamodule id="meta-gtk-osx-webkit1.6">
+    <dependencies>
+      <dep package="meta-gtk-osx-core"/>
+      <dep package="libsoup"/>
+      <dep package="WebKit1.6"/>
+    </dependencies>
+  </metamodule>
+
   <metamodule id="meta-gtk-osx-webkit-gtk3">
     <dependencies>
       <dep package="meta-gtk-osx-gtk3"/>
@@ -83,8 +91,10 @@
     </dependencies>
   </autotools>
 
-  <autotools id="openssl" autogen-sh="Configure"
-	     autogen-template="%(srcdir)s/Configure --prefix=%(prefix)s  darwin-i386-cc shared"
+  <!-- of the many arguments such as prefix and libdir that jhbuild might pass
+  to configure, openssl only understands prefix, and only with =. -->
+  <autotools id="openssl" autogen-sh="Configure" autogenargs="shared"
+             autogen-template="%(srcdir)s/%(autogen-sh)s --prefix=%(prefix)s %(autogenargs)s"
 	     supports-non-srcdir-builds="no">
     <branch module="openssl-0.9.8ze.tar.gz" version="0.9.8ze" repo="openssl"/>
   </autotools>
@@ -164,6 +174,7 @@
 	    repo="abisource/enchant">
  <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/enchant-gsize.patch" strip="1"/>
  <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/enchant-env.patch" strip="1"/>
+ <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/enchant-xdg-path.patch" strip="1"/>
     </branch>
     <dependencies>
       <dep package="glib"/>
@@ -228,6 +239,33 @@
     <after>
       <dep package="meta-gtk-osx-core"/>
       <dep package="meta-gstreamer-1.0"/>
+      <dep package="meta-gtk-osx-gtk3"/>
+    </after>
+  </autotools>
+
+  /* WebKit 1.10 doesn't build with the 10.5 SDK, so use this older version for old builds. */
+  <autotools id="WebKit1.6" autogen-sh="configure"
+	     autogenargs="--with-target=quartz --disable-video --with-font-backend=pango --with-gtk=2.0">
+    <branch repo="webkit.org" module="webkit-1.6.1.tar.gz" version="1.6.1">
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/webkit-1.6-no-x11.patch" strip="1"/>
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/webkit-1.6-pango-includes.patch" strip="1"/>
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/webkit-1.6-missing-utf8-include.patch" strip="1"/>
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/webkit-1.6-enable-blob.patch" strip="1"/>
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/webkit-1.6-gnome-3.6-fixup.patch" strip="1"/>
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/webkit-1.6-clang-fixup.patch" strip="1"/>
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/webkit-1.6-out-of-source-fixup.patch" strip="1"/>
+
+    </branch>
+    <dependencies>
+      <dep package="enchant"/>
+      <dep package="icu"/>
+      <dep package="libsoup"/>
+      <dep package="meta-gtk-osx-freetype"/>
+    </dependencies>
+    <after>
+      <dep package="meta-gtk-osx-core"/>
+      <dep package="meta-gstreamer-1.0"/>
+      <dep package="meta-gtk-osx-gtk3"/>
     </after>
   </autotools>
 
@@ -244,13 +282,13 @@
   <autotools id="webkit1gtk3" autogen-sh="autoreconf" makeargs="-j1"
              autogenargs="--enable-quartz-target --with-gtk=3.0 --disable-webkit2 --disable-credential-storage --disable-geolocation --disable-video --disable-web-audio CXXFLAGS='-std=gnu++11'">
     <branch repo="webkit.org" module="webkitgtk-2.4.8.tar.xz" version="2.4.8">
-      <patch file="file:///Users/john/Development/GTK-OSX/gtk-osx-build/patches/webkit-126324-clang-check.patch"
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/webkit-126324-clang-check.patch"
              strip="1"/>
-      <patch file="file:///Users/john/Development/GTK-OSX/gtk-osx-build/patches/webkit-140167-disable-netscape-api.patch"
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/webkit-140167-disable-netscape-api.patch"
              strip="1"/>
-      <patch file="file:///Users/john/Development/GTK-OSX/gtk-osx-build/patches/webkit-133293-cfi-clang-failure.patch"
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/webkit-133293-cfi-clang-failure.patch"
              strip="1"/>
-      <patch file="file:///Users/john/Development/GTK-OSX/gtk-osx-build/patches/webkit-126433-check-platform-gtk.patch"
+      <patch file="http://git.gnome.org/browse/gtk-osx/plain/patches/webkit-126433-check-platform-gtk.patch"
              strip="1"/>
     </branch>
     <dependencies>
